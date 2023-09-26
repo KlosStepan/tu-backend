@@ -5,6 +5,7 @@
   "main": "dist/app.js",
   "scripts": {
     "start": "tsc && cp src/dummy-data/*.json dist && node dist/app.js ",
+    "build": "tsc && cp src/dummy-data/*.json dist",
     "lint": "eslint . --ext .ts",
     "clean": "rm -rf dist",
     "test": "vitest"
