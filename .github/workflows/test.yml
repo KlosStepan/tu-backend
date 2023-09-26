@@ -3,7 +3,7 @@ name: Health condition via set of tests
 on:
   push:
     branches:
-      - master
+      - main
   workflow_dispatch:
 
 jobs:
