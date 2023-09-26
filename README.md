@@ -1,21 +1,22 @@
 # tu-backend
-Backend k projektu `Transparentní účet` implementující backend bankovního systému transparentního účtu.
-## Tech Stack
-Využité technologie při tvorbě backendu:
+Backend for the `Transparent Account` project implementing the backend of a transparent bank account system.
+
+## Backend Tech Stack
+Technologies used in the backend development:
 - `Node.js` v. 20.7,
 - `TypeScript` v. 5.2,
-- knihovna `Express` v. 4.17.  
+- `Express` library v. 4.17.
 
-## REST API  
-Implementujeme unrestricted endpointy k získávání veřejných informací.  
+## REST API
+We implement unrestricted endpoints to retrieve public information.
 
-Routes: (TODO parametry)
+Routes: (TODO parameters)
 - GET /accounts
 - GET /balance
 - GET /transactions
 
-## Popis projektu a jeho fungování  
-Je třeba provést `build`, který  odstraní TypeScript (build v tomto případě není terminus technicus, pouze "krok"). TypeScript jsou anotace v JavaScriptu přítomné pouze při vývoji. Definujeme příkaz `start` v `package.json`, který odstraní TypeScript & spustí backend.  
+## Project Description and Functionality
+To build, run the `build` command, which removes TypeScript (in this case, "build" is not a technical term, just a step). TypeScript annotations are present in JavaScript only during development. We define a `start` command in `package.json` that removes TypeScript and starts the backend.
 
 ### `npm run start`
 
@@ -25,26 +26,27 @@ Je třeba provést `build`, který  odstraní TypeScript (build v tomto případ
 
 Express is listening at http://localhost:3000
 ```  
-### Dotaz na EndPoint, např. `GET /accounts`
+### Endpoint Query, for example, `GET /accounts`
 ```
 tu-backend git:(main) ✗ curl http://localhost:3000/accounts
 {"response":[{"currency":"CZK","id":"101010101010","identification":{"iban":"CZ3560000000002002222222","otherAccountNumber":"000000 2002222222"},"name":"Transparent 1","product":"-1","servicer":{"bankCode":"6000","bic":"PMBPCZPP","countryCode":"CZ"}}]}
 ```
 
 
-### Průřez stacku při dotazu v aplikaci
-Při dotazu probíhá následující:
-- `klient` (browser) zformuje `HTTP request` např. `GET /accounts` na 7. vrstvě a odešle na `BACKEND_URL` (proměnná/URL/IP backendu),
-- `(*1)`,
-- `Express` (v Node.js aplikaci) sloužící jako webserver request přijme a "matchne poptávanou route",
-- specifická route volá naši `asynchronní funkci` s business logikou - v tomto případě I/O operací `(*2)`
-- až OS pod Node.js zpracuje na něj delegované asynchronní čtení z disku realizované pomocí syscallu `epoll_wait()`, (*3) callback s odpovědí se zařadí do `Event Queue` a `Event Loop` vypořádá odpověď, až na tento callback přijde řada dle "execution priorit". 
 
-(*1) Mezi klientem a Node.js aplikací na aplikační vrstvě může být Kubernetes, kde probíhá ještě routing `Load balancer` -> `Ingress controller` -> `Servis tu-backend-service` -> `Container IP:PORT`.
+### Overview of the Entire Stack during Application Query
+When a query is made, the following happens:
+- The client (browser) forms an HTTP request, e.g., `GET /accounts`, at the 7th layer and sends it to the `BACKEND_URL` (variable/URL/IP of the backend).
+- (*1)
+- `Express` (in the Node.js application), serving as a web server, receives and matches the requested route.
+- The specific route calls our asynchronous function with business logic - in this case, I/O operations (*2).
+- Once the OS under Node.js processes the asynchronously delegated disk reading, realized using the `epoll_wait()` syscall, (*3) the callback with the response is placed in the `Event Queue`, and the `Event Loop` handles the response when it's the turn of execution priority.
 
-(*2) I/O operace čtení z disku. Principiálně stejně funguje čtení z databáze v Node.js, nebo volání Web APIs `Fetch API` v browseru.
+(*1) Between the client and the Node.js application at the application layer, there may be Kubernetes, where routing still occurs: `Load balancer` -> `Ingress controller` -> `tu-backend-service` -> `Container IP:PORT`.
 
-(*3) JavaScript runtime je single threaded a pro `Node.js` a `browser` "funguje stejně" - v Node.js je primární focus asynchronních operací na I/O, v prohlížeči se jedná o Web APIs (fetche, timeouty, manipulace s DOM přes DOM API, atd.). Offtopic pro naše potřeby, v Node.js je možné vytvořit nový process, v browseru zase nové vlákno SharedWorker klidně s běžící WebAssembly binárkou, ale to už je mimo naše aktuální potřeby. 
+(*2) I/O operations for reading from disk. The principle is the same for reading from a database in Node.js or making calls to Web APIs using the Fetch API in the browser.
+
+(*3) The JavaScript runtime is single-threaded, and it works the same way for `Node.js` and the browser - in Node.js, the primary focus is on asynchronous I/O operations, while in the browser, it involves Web APIs (fetches, timeouts, DOM manipulation through DOM API, etc.). Off-topic for our needs, in Node.js, it's possible to create a new process, and in the browser, a new thread with a running WebAssembly binary, but that's beyond our current requirements.
 
 ## Try it out
 ```
@@ -60,6 +62,6 @@ Express is listening at http://localhost:3000
 ```
 
 ## Tweaks
-- `"main": "dist/app.js",` po odstraneni TS si hodime logiku do /dist slozky
-- scripts: `"start": "tsc && cp src/dummy-data/*.json dist && node dist/app.js ",` kopirujeme dummy JSON soubory pred spustenim Node.js
-- scripts: `"clean": "rm -rf dist",` na smazani /dist slozky
+- `"main": "dist/app.js",` after removing TypeScript, we put the logic in the /dist folder.
+- scripts: `"start": "tsc && cp src/dummy-data/*.json dist && node dist/app.js ",` we copy dummy JSON files before starting Node.js.
+- scripts: `"clean": "rm -rf dist",` to delete the /dist folder.
