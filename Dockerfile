@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install only production dependencies
-RUN npm install --production
+RUN npm install
 
 # Copy the compiled TypeScript code (from your local /dist directory) to the container
 COPY . .
