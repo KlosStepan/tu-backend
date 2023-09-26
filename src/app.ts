@@ -2,7 +2,7 @@ import express from 'express';
 const app = express();
 const port = 3000;
 
-import { accounts, balance, transactions } from './bankaController';
+import { accounts, balance, transactions } from './bankController';
 
 /*app.get('/', (req, res) => {
   res.send('Hello World!');
@@ -12,12 +12,14 @@ app.get('/accounts', async (req, res) => {
   res.send(await accounts());
 });
 
-app.get('/balance', async (req, res) => {
-  res.send(await balance());
+app.get('/accounts/:accountNumber/balance', async (req, res) => {
+  const accountNumber = parseInt(req.params.accountNumber);
+  res.send(await balance(accountNumber));
 });
 
-app.get('/transactions', async (req, res) => {
-  res.send(await transactions());
+app.get('/accounts/:accountNumber/transactions', async (req, res) => {
+  const accountNumber = parseInt(req.params.accountNumber);
+  res.send(await transactions(accountNumber));
 });
 
 app.listen(port, () => {
