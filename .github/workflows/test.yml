@@ -1,4 +1,4 @@
-name: Health condition via set of tests 
+name: Health condition check via set of tests 
 
 on:
   push:

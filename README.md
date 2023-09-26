@@ -7,14 +7,31 @@ Technologies used in the backend development:
 - `TypeScript` v. 5.2,
 - `Express` library v. 4.17.
 
+## CI/CD Workflows
+We have 2 workflows to support our backend project.
+- **Health condition check via set of tests** called `test.yml` - automatic.
+- **Build+Push+Deploy** called `build-push-deploy.yml` - manual.
+
 ## REST API
-We implement unrestricted endpoints to retrieve public information.
+We implement unrestricted endpoints to retrieve public information about account.
 
-Routes: (TODO parameters)
-- GET /accounts
-- GET /balance
-- GET /transactions
+Routes
+- GET `/accounts`  
+- GET `/accounts/:accountNumber/balance`  
+- GET `/accounts/:accountNumber/transactions`  
 
+with functions in `src/bankController.ts` returning data
+- async function `accounts()`
+- async function `balance(accountNumber: number)`
+- async function `transactions(accountNumber: number)`  
+
+ready (mocked w/ .json files) ready for further extensibility.  
+```ts
+app.get('/accounts/:accountNumber/balance', async (req, res) => {
+  const accountNumber = parseInt(req.params.accountNumber);
+  res.send(await balance(accountNumber));
+});
+```
 ## Project Description and Functionality
 To build, run the `build` command, which removes TypeScript (in this case, "build" is not a technical term, just a step). TypeScript annotations are present in JavaScript only during development. We define a `start` command in `package.json` that removes TypeScript and starts the backend.
 
