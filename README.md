@@ -82,3 +82,8 @@ Express is listening at http://localhost:3000
 - `"main": "dist/app.js",` after removing TypeScript, we put the logic in the /dist folder.
 - scripts: `"start": "tsc && cp src/dummy-data/*.json dist && node dist/app.js ",` we copy dummy JSON files before starting Node.js.
 - scripts: `"clean": "rm -rf dist",` to delete the /dist folder.
+
+## TODOs
+- [ ] tests - basic (is Node.js running), endpoints-healthcheck (poke 3 endpoints), endpoints-testing (errors, correct results, HTTP heads, etc.)
+- [ ] Dockerfile fine
+- [ ] CI/CD into Kubernetes Cluster via docker hub (deployment.yaml as well)
