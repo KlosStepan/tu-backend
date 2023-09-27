@@ -5,14 +5,17 @@ Backend for the `Transparent Account` project implementing the backend of a tran
 Technologies used in the backend development:
 - `Node.js` v. 20.7,
 - `TypeScript` v. 5.2,
-- `Express` library v. 4.17.
+- `Express` library v. 4.17.  
+
+We run this application on [our](https://github.com/KlosStepan/DOKS-tutorial) DigitalOcean Kubernetes cluster.  
+Version of this API can be checked at http://ppf-be.stkl.cz/v.
 
 ## CI/CD Workflows
 We have 2 workflows to support our backend project.
 - **Health condition check via set of tests** called `test.yml` - automatic.
 - **Build+Push+Deploy** called `build-push-deploy.yml` - manual.
 
-## REST API
+## REST API Definition
 We implement unrestricted endpoints to retrieve public information about account.
 
 Routes
@@ -65,7 +68,7 @@ When a query is made, the following happens:
 
 (*3) The JavaScript runtime is single-threaded, and it works the same way for `Node.js` and the browser - in Node.js, the primary focus is on asynchronous I/O operations, while in the browser, it involves Web APIs (fetches, timeouts, DOM manipulation through DOM API, etc.). Off-topic for our needs, in Node.js, it's possible to create a new process, and in the browser, a new thread with a running WebAssembly binary, but that's beyond our current requirements.
 
-## Try it out
+## Try it out!
 ```
 projects> git clone https://github.com/KlosStepan/tu-backend
 projects> cd tu-backend
@@ -84,6 +87,7 @@ Express is listening at http://localhost:3000
 - scripts: `"clean": "rm -rf dist",` to delete the /dist folder.
 
 ## TODOs
-- [ ] tests - basic (is Node.js running), endpoints-healthcheck (poke 3 endpoints), endpoints-testing (errors, correct results, HTTP heads, etc.)
-- [ ] Dockerfile fine
-- [ ] CI/CD into Kubernetes Cluster via docker hub (deployment.yaml as well)
+- [ ] improve tests - basic (is Node.js running), endpoints-healthcheck (poke 3 endpoints), endpoints-testing (errors, correct results, HTTP heads, etc.)
+- [x] Dockerfile file
+- [x] CI/CD into Kubernetes Cluster via docker hub (deployment.yaml as well)
+- ~~[ ] better TypeScript utilization on backend~~
