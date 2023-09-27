@@ -10,4 +10,4 @@ RUN npm run build
 FROM node:14-alpine
 COPY --from=build /app/dist /app
 EXPOSE 3000
-CMD ["node", "app.js"]
+CMD ["node", "/app/app.js"]
