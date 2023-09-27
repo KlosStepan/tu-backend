@@ -1,9 +1,13 @@
 import express from 'express';
-const app = express();
-const port = 3000;
+import cors from 'cors';
 
 import { accounts, balance, transactions } from './bankController';
 import { returnApiVersion } from './apiController';
+
+const app = express();
+const port = 3000;
+
+app.use(cors())
 //Hello World!
 /*app.get('/', (req, res) => {
   res.send('Hello World!');
