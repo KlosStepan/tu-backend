@@ -8,7 +8,7 @@ Technologies used for the backend development:
 - `Express` library v. 4.17,
 - `Vitest` a unit test framework v. 0.34.5.  
 
-We run this application on [our](https://github.com/KlosStepan/DOKS-tutorial) DigitalOcean `Kubernetes cluster` and distribute as `Docker image`.  
+We run this application on [our](https://github.com/KlosStepan/DOKS-tutorial) DigitalOcean `Kubernetes cluster` and distribute it as `Docker image`.  
 Version of this API can be checked at http://ppf-be.stkl.cz/v.
 
 ## CI/CD Workflows
@@ -41,9 +41,9 @@ app.get('/accounts/:accountNumber/balance', async (req, res) => {
 });
 ```
 ## Project Description and Functionality
-Run ["the build command"](https://github.com/KlosStepan/tu-backend/blob/main/package.json#L8) as `npm run build`, to remove TypeScript and copy dummy-data over to `/dist` folder (not important, but a step between TS and JS). These annotations are present in JavaScript - only during development. We define ["the start command"](https://github.com/KlosStepan/tu-backend/blob/main/package.json#L7) in `package.json` that removes TypeScript and starts the backend for local development.
+Run ["the build command"](https://github.com/KlosStepan/tu-backend/blob/main/package.json#L8) as `npm run build`, to remove TypeScript and copy dummy-data over to `/dist` folder (not important, but a step between TS and JS). These annotations are present in JavaScript only during development. We define ["the start command"](https://github.com/KlosStepan/tu-backend/blob/main/package.json#L7) in `package.json` that removes TypeScript and starts the backend for local development.
 
-### Example of `npm run start`
+### Example of `npm run start` on local machine
 
 ```
 > tu-backend@1.0.0 start /Users/stepo/projects/tu-backend
@@ -63,13 +63,13 @@ When a query is made, the following happens:
 - `(*1)`
 - `Express` (in running Node.js backend), serving as a web server, receives and matches the requested route.
 - This specific route calls asynchronous function with business logic - in this case, I/O operation `(*2)`.
-- After Node.js delegates the `fs reading` (asynchronous filesystem reading) onto the OS under Node.js processes w/ backend. It is dealt with on the OS level using the `epoll_wait()` syscall. Then, once reading is finished, `(*3)` callback with response is placed into the `Event Queue`, and the `Event Loop` handles response based on `execution priority`.
+- After that Node.js delegates the `fs reading` (asynchronous filesystem reading) onto the OS under Node.js processes running our backend. It is dealt with on the OS level using `epoll_wait()` syscall. Then, once reading is finished, `(*3)` callback with response is placed into the `Event Queue`, and `Event Loop` handles response based on `execution priority` of queued callback.
 
-(*1) Between `the client browser` and `the Node.js application` on the application layer is usually Kubernetes - where additional routing occurs as follows: `Load balancer` -> |entering Kubernetes| -> `Ingress controller` -> `tu-backend-service` -> specific `Container IP:PORT`.
+(*1) Between `client browser` and `Node.js application` is usually Kubernetes - where additional routing occurs as follows: `Load balancer` -> |entering Kubernetes| -> `Ingress controller` -> `tu-backend-service` -> specific `Container IP:PORT`.
 
 (*2) Specifically I/O operation for reading from disk. The principle is the same for reading from a database in Node.js or making calls to Web APIs using the Fetch API in the browser.
 
-(*3) The JavaScript runtime is single-threaded, and it works the same way for `Node.js` and the browser - in Node.js, the primary focus is on asynchronous I/O operations, while in the browser, it involves Web APIs (fetches, timeouts, DOM manipulation through DOM API, etc.). Offtopic for our needs, however, in Node.js it is possible to create a new process, and in the browser, a new thread with a running WebAssembly binary, but that's beyond our current requirements.
+(*3) The JavaScript runtime is single-threaded, and it works the same way for `Node.js` and `browser` - in Node.js, the primary focus is on asynchronous I/O operations, while in the browser, it involves Web APIs (fetches, timeouts, DOM manipulation through DOM API, etc.). Offtopic for our needs, however, in Node.js it is possible to create a new process, and in browser, a SharedWorker even with running WebAssembly binary compiled from whatever language - but that's way beyond our current requirements.
 
 ## Try it out!
 ```
@@ -91,6 +91,7 @@ Express is listening at http://localhost:3000
 
 ## TODOs / Roadmap
 - [ ] Write 3 types of tests (ala CRUD) - `basic` (is Node.js running), `endpoints-healthcheck` (poke 3 endpoints), `endpoints-testing` (errors, correct results, HTTP heads, etc.).
+- [ ] Think about dynamical versioning of API during build [ala this](https://github.com/KlosStepan/tu-backend/blob/main/config/deployment.yaml#L29). Maybe sed substitute in src/apiController.ts somehow.
 - [ ] Improve backend error handling - HTTP Codes 200/400/404, unified error reponses (`bad reponse` / `i/o error`, `timeout`). 
 - [x] Dockerfile file debug.
 - [x] CI/CD deploy into Kubernetes Cluster via docker hub (deployment.yaml as well).
