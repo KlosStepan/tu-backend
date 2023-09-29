@@ -91,7 +91,7 @@ Express is listening at http://localhost:3000
 
 ## TODOs / Roadmap
 - [ ] Write 3 types of tests (ala CRUD) - `basic` (is Node.js running), `endpoints-healthcheck` (poke 3 endpoints), `endpoints-testing` (errors, correct results, HTTP heads, etc.).
-- [ ] Think about dynamical versioning of API during build [ala this](https://github.com/KlosStepan/tu-backend/blob/main/config/deployment.yaml#L29). Maybe sed substitute in src/apiController.ts somehow.
+- [ ] Think about dynamical versioning [of API version](https://github.com/KlosStepan/tu-backend/blob/main/src/apiController.ts#L3) during build [ala this](https://github.com/KlosStepan/tu-backend/blob/main/config/deployment.yaml#L29). Maybe sed substitute in src/apiController.ts somehow.
 - [ ] Improve backend error handling - HTTP Codes 200/400/404, unified error reponses (`bad reponse` / `i/o error`, `timeout`). 
 - [x] Dockerfile file debug.
 - [x] CI/CD deploy into Kubernetes Cluster via docker hub (deployment.yaml as well).
