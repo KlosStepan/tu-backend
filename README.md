@@ -5,15 +5,16 @@ Backend for the `Transparent Account` project implementing backend of a transpar
 Technologies used for the backend development:
 - `Node.js` v. 20.7,
 - `TypeScript` v. 5.2,
-- `Express` library v. 4.17.  
+- `Express` library v. 4.17,
+- `Vitest` a unit test framework v. 0.34.5.  
 
-We run this application on [our](https://github.com/KlosStepan/DOKS-tutorial) DigitalOcean Kubernetes cluster.  
+We run this application on [our](https://github.com/KlosStepan/DOKS-tutorial) DigitalOcean `Kubernetes cluster` and distribute as `Docker image`.  
 Version of this API can be checked at http://ppf-be.stkl.cz/v.
 
 ## CI/CD Workflows
-We have 2 workflows to facilitate `development & deployment` experience.
+We have 2 workflows to facilitate `development & deployment` process.
 - **Health condition check via set of tests** called [`test.yml`](https://github.com/KlosStepan/tu-backend/blob/main/.github/workflows/test.yml) - runs automatically.
-- **Build+Push+Deploy** called [`build-push-deploy.yml`](https://github.com/KlosStepan/tu-backend/blob/main/.github/workflows/build-push-deploy.yml) - runs manually.
+- **Build+Push+Deploy** called [`build-push-deploy.yml`](https://github.com/KlosStepan/tu-backend/blob/main/.github/workflows/build-push-deploy.yml) applies [`deployment.yaml`](https://github.com/KlosStepan/tu-backend/blob/main/config/deployment.yaml) - runs manually.
 
 ## REST API Definition
 We implement unrestricted endpoints to retrieve public information about bank accounts.
@@ -30,17 +31,19 @@ with functions in `src/bankController.ts` returning data
 
 ready (mocked w/ .json files) for further extensibility.  
 
-Example of endpoint in `src/app.ts` calling function from `src/bankController.ts`.
+Example of endpoint defined in `app.ts` calling function from `bankController.ts`. Folder [`/src`](https://github.com/KlosStepan/tu-backend/tree/main/src).
 ```ts
+import { ..., balance } from './bankController';
+...
 app.get('/accounts/:accountNumber/balance', async (req, res) => {
   const accountNumber = parseInt(req.params.accountNumber);
   res.send(await balance(accountNumber));
 });
 ```
 ## Project Description and Functionality
-Run ["the build command"](https://github.com/KlosStepan/tu-backend/blob/main/package.json#L8) as `npm run build`, to remove TypeScript. These annotations are present in JavaScript - only during development. We define ["the start command"](https://github.com/KlosStepan/tu-backend/blob/main/package.json#L7) in [`package.json`](https://github.com/KlosStepan/tu-backend/blob/main/package.json) that removes TypeScript and starts the backend for local development.
+Run ["the build command"](https://github.com/KlosStepan/tu-backend/blob/main/package.json#L8) as `npm run build`, to remove TypeScript and copy dummy-data over to `/dist` folder (not important, but a step between TS and JS). These annotations are present in JavaScript - only during development. We define ["the start command"](https://github.com/KlosStepan/tu-backend/blob/main/package.json#L7) in `package.json` that removes TypeScript and starts the backend for local development.
 
-### Example `npm run start`
+### Example of `npm run start`
 
 ```
 > tu-backend@1.0.0 start /Users/stepo/projects/tu-backend
@@ -48,7 +51,7 @@ Run ["the build command"](https://github.com/KlosStepan/tu-backend/blob/main/pac
 
 Express is listening at http://localhost:3000
 ```  
-### Endpoint Query, for example, `GET /accounts`
+### Endpoint Query, for ex. `GET /accounts`
 ```
 tu-backend git:(main) ✗ curl http://localhost:3000/accounts
 [{"currency":"CZK","id":"101010101010","identification":{"iban":"CZ3560000000002002222222","otherAccountNumber":"000000 2002222222"},"name":"Transparent 1","product":"-1","servicer":{"bankCode":"6000","bic":"PMBPCZPP","countryCode":"CZ"}}]
@@ -82,11 +85,11 @@ Express is listening at http://localhost:3000
 ```
 
 ## Tweaks
-- `"main": "dist/app.js",` after removing TypeScript, we put the logic in the /dist folder.
+- `"main": "dist/app.js",` after removing TypeScript, we put the logic in the `/dist` folder for local and deployment.
 - scripts: `"start": "tsc && cp src/dummy-data/*.json dist && node dist/app.js ",` we copy dummy JSON files before starting Node.js.
 - scripts: `"clean": "rm -rf dist",` to delete the /dist folder.
 
-## TODOs
+## TODOs / Roadmap
 - [ ] Write 3 types of tests (ala CRUD) - `basic` (is Node.js running), `endpoints-healthcheck` (poke 3 endpoints), `endpoints-testing` (errors, correct results, HTTP heads, etc.).
 - [ ] Improve backend error handling - HTTP Codes 200/400/404, unified error reponses (`bad reponse` / `i/o error`, `timeout`). 
 - [x] Dockerfile file debug.
