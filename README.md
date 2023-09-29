@@ -1,8 +1,8 @@
 # tu-backend
-Backend for the `Transparent Account` project implementing the backend of a transparent bank account system.
+Backend for the `Transparent Account` project implementing backend of a transparent bank account system.
 
 ## Backend Tech Stack
-Technologies used in the backend development:
+Technologies used for the backend development:
 - `Node.js` v. 20.7,
 - `TypeScript` v. 5.2,
 - `Express` library v. 4.17.  
@@ -11,14 +11,14 @@ We run this application on [our](https://github.com/KlosStepan/DOKS-tutorial) Di
 Version of this API can be checked at http://ppf-be.stkl.cz/v.
 
 ## CI/CD Workflows
-We have 2 workflows to support our backend project.
-- **Health condition check via set of tests** called `test.yml` - automatic.
-- **Build+Push+Deploy** called `build-push-deploy.yml` - manual.
+We have 2 workflows to facilitate `development & deployment` experience.
+- **Health condition check via set of tests** called [`test.yml`](https://github.com/KlosStepan/tu-backend/blob/main/.github/workflows/test.yml) - runs automatically.
+- **Build+Push+Deploy** called [`build-push-deploy.yml`](https://github.com/KlosStepan/tu-backend/blob/main/.github/workflows/build-push-deploy.yml) - runs manually.
 
 ## REST API Definition
-We implement unrestricted endpoints to retrieve public information about account.
+We implement unrestricted endpoints to retrieve public information about bank accounts.
 
-Routes
+Routes accessible via HTTP protocol
 - GET `/accounts`  
 - GET `/accounts/:accountNumber/balance`  
 - GET `/accounts/:accountNumber/transactions`  
@@ -28,7 +28,9 @@ with functions in `src/bankController.ts` returning data
 - async function `balance(accountNumber: number)`
 - async function `transactions(accountNumber: number)`  
 
-ready (mocked w/ .json files) ready for further extensibility.  
+ready (mocked w/ .json files) for further extensibility.  
+
+Example of endpoint in `src/app.ts` calling function from `src/bankController.ts`.
 ```ts
 app.get('/accounts/:accountNumber/balance', async (req, res) => {
   const accountNumber = parseInt(req.params.accountNumber);
@@ -36,37 +38,35 @@ app.get('/accounts/:accountNumber/balance', async (req, res) => {
 });
 ```
 ## Project Description and Functionality
-To build, run the `build` command, which removes TypeScript (in this case, "build" is not a technical term, just a step). TypeScript annotations are present in JavaScript only during development. We define a `start` command in `package.json` that removes TypeScript and starts the backend.
+Run ["the build command"](https://github.com/KlosStepan/tu-backend/blob/main/package.json#L8) as `npm run build`, to remove TypeScript. These annotations are present in JavaScript - only during development. We define ["the start command"](https://github.com/KlosStepan/tu-backend/blob/main/package.json#L7) in [`package.json`](https://github.com/KlosStepan/tu-backend/blob/main/package.json) that removes TypeScript and starts the backend for local development.
 
-### `npm run start`
+### Example `npm run start`
 
 ```
 > tu-backend@1.0.0 start /Users/stepo/projects/tu-backend
-> tsc && node dist/app.js
+> tsc && cp src/dummy-data/*.json dist && node dist/app.js 
 
 Express is listening at http://localhost:3000
 ```  
 ### Endpoint Query, for example, `GET /accounts`
 ```
 tu-backend git:(main) ✗ curl http://localhost:3000/accounts
-{"response":[{"currency":"CZK","id":"101010101010","identification":{"iban":"CZ3560000000002002222222","otherAccountNumber":"000000 2002222222"},"name":"Transparent 1","product":"-1","servicer":{"bankCode":"6000","bic":"PMBPCZPP","countryCode":"CZ"}}]}
+[{"currency":"CZK","id":"101010101010","identification":{"iban":"CZ3560000000002002222222","otherAccountNumber":"000000 2002222222"},"name":"Transparent 1","product":"-1","servicer":{"bankCode":"6000","bic":"PMBPCZPP","countryCode":"CZ"}}]
 ```
-
-
 
 ### Overview of the Entire Stack during Application Query
 When a query is made, the following happens:
-- The client (browser) forms an HTTP request, e.g., `GET /accounts`, at the 7th layer and sends it to the `BACKEND_URL` (variable/URL/IP of the backend).
-- (*1)
-- `Express` (in the Node.js application), serving as a web server, receives and matches the requested route.
-- The specific route calls our asynchronous function with business logic - in this case, I/O operations (*2).
-- Once the OS under Node.js processes the asynchronously delegated disk reading, realized using the `epoll_wait()` syscall, (*3) the callback with the response is placed in the `Event Queue`, and the `Event Loop` handles the response when it's the turn of execution priority.
+- The client (browser) forms a request, e.g. `HTTP GET /accounts`, on the 7th layer and sends it to the `BACKEND_URL` (variable/URL/IP of the backend).
+- `(*1)`
+- `Express` (in running Node.js backend), serving as a web server, receives and matches the requested route.
+- This specific route calls asynchronous function with business logic - in this case, I/O operation `(*2)`.
+- After Node.js delegates the `fs reading` (asynchronous filesystem reading) onto the OS under Node.js processes w/ backend. It is dealt with on the OS level using the `epoll_wait()` syscall. Then, once reading is finished, `(*3)` callback with response is placed into the `Event Queue`, and the `Event Loop` handles response based on `execution priority`.
 
-(*1) Between the client and the Node.js application at the application layer, there may be Kubernetes, where routing still occurs: `Load balancer` -> `Ingress controller` -> `tu-backend-service` -> `Container IP:PORT`.
+(*1) Between `the client browser` and `the Node.js application` on the application layer is usually Kubernetes - where additional routing occurs as follows: `Load balancer` -> |entering Kubernetes| -> `Ingress controller` -> `tu-backend-service` -> specific `Container IP:PORT`.
 
-(*2) I/O operations for reading from disk. The principle is the same for reading from a database in Node.js or making calls to Web APIs using the Fetch API in the browser.
+(*2) Specifically I/O operation for reading from disk. The principle is the same for reading from a database in Node.js or making calls to Web APIs using the Fetch API in the browser.
 
-(*3) The JavaScript runtime is single-threaded, and it works the same way for `Node.js` and the browser - in Node.js, the primary focus is on asynchronous I/O operations, while in the browser, it involves Web APIs (fetches, timeouts, DOM manipulation through DOM API, etc.). Off-topic for our needs, in Node.js, it's possible to create a new process, and in the browser, a new thread with a running WebAssembly binary, but that's beyond our current requirements.
+(*3) The JavaScript runtime is single-threaded, and it works the same way for `Node.js` and the browser - in Node.js, the primary focus is on asynchronous I/O operations, while in the browser, it involves Web APIs (fetches, timeouts, DOM manipulation through DOM API, etc.). Offtopic for our needs, however, in Node.js it is possible to create a new process, and in the browser, a new thread with a running WebAssembly binary, but that's beyond our current requirements.
 
 ## Try it out!
 ```
@@ -76,7 +76,7 @@ projects/tu-backend> npm install
 projects/tu-backend> npm run start
 
 > tu-backend@1.0.0 start /Users/stepo/projects/tu-backend
-> tsc && cp src/*.json dist && node dist/app.js 
+> tsc && cp src/dummy-data/*.json dist && node dist/app.js 
 
 Express is listening at http://localhost:3000
 ```
@@ -87,7 +87,11 @@ Express is listening at http://localhost:3000
 - scripts: `"clean": "rm -rf dist",` to delete the /dist folder.
 
 ## TODOs
-- [ ] improve tests - basic (is Node.js running), endpoints-healthcheck (poke 3 endpoints), endpoints-testing (errors, correct results, HTTP heads, etc.)
-- [x] Dockerfile file
-- [x] CI/CD into Kubernetes Cluster via docker hub (deployment.yaml as well)
-- ~~[ ] better TypeScript utilization on backend~~
+- [ ] Write 3 types of tests (ala CRUD) - `basic` (is Node.js running), `endpoints-healthcheck` (poke 3 endpoints), `endpoints-testing` (errors, correct results, HTTP heads, etc.).
+- [ ] Improve backend error handling - HTTP Codes 200/400/404, unified error reponses (`bad reponse` / `i/o error`, `timeout`). 
+- [x] Dockerfile file debug.
+- [x] CI/CD deploy into Kubernetes Cluster via docker hub (deployment.yaml as well).
+- [x] CI/CD run tests via `npm test`.
+- [x] Prepare `backendController.ts` so the logic is easily. replacable w/ actual DB - either for ex. [oracledb](http://blog.stkl.cz/2-oracledb-nodejs/), Firebase or whateverdb.
+- [ ] ~~Better TypeScript utilization on backend.~~
+- [ ] Re-read the README.md day before.
