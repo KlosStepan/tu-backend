@@ -92,10 +92,10 @@ Express is listening at http://localhost:3000
 ## TODOs / Roadmap
 - [ ] ~~Write 3 types of tests (ala CRUD) - `basic` (is Node.js running), `endpoints-healthcheck` (poke 3 endpoints), `endpoints-testing` (errors, correct results, HTTP heads, etc.).~~ re: [SwimmPair BE Unit testing](https://github.com/KlosStepan/SwimmPair-Www/blob/master/tests/Unit/ClubsManagerTest.php)
 - [ ] ~~Think about dynamical versioning [of API version](https://github.com/KlosStepan/tu-backend/blob/main/src/apiController.ts#L3) during build [ala this](https://github.com/KlosStepan/tu-backend/blob/main/config/deployment.yaml#L29). Maybe sed substitute in src/apiController.ts somehow.~~ WHATEVER for now
-- [ ] Improve backend error handling - HTTP Codes 200/400/404, unified error reponses (`bad reponse` / `i/o error`, `timeout`). re: [SwimmPair handling 1 - types](https://github.com/KlosStepan/SwimmPair-Www/blob/master/model/PagesManager.php#L51-L64) [SwimmPair handling 2 - i/o](https://github.com/KlosStepan/SwimmPair-Www/blob/master/model/Sanitizer.php), etc.
+- [ ] ~~Improve backend error handling - HTTP Codes 200/400/404, unified error reponses (`bad reponse` / `i/o error`, `timeout`).~~ re: [SwimmPair handling 1 - types](https://github.com/KlosStepan/SwimmPair-Www/blob/master/model/PagesManager.php#L51-L64) [SwimmPair handling 2 - i/o](https://github.com/KlosStepan/SwimmPair-Www/blob/master/model/Sanitizer.php), etc.
 - [x] Dockerfile file debug.
 - [x] CI/CD deploy into Kubernetes Cluster via docker hub (deployment.yaml as well).
 - [x] CI/CD run tests via `npm test`.
-- [x] Prepare `backendController.ts` so the logic is easily. replacable w/ actual DB - either for ex. [oracledb](http://blog.stkl.cz/2-oracledb-nodejs/), Firebase or whateverdb.
+- [x] Prepare `backendController.ts` so the logic is easily replacable w/ actual DB - either for ex. [oracledb](http://blog.stkl.cz/2-oracledb-nodejs/), Firebase or whatever db.
 - [ ] ~~Better TypeScript utilization on backend.~~ Depends on TypeScript sharing solution (Swagger, API for Types, DB tables->Types during build, etc.)
 - [x] Re-read the README.md day before.
